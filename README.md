@@ -1,1 +1,1 @@
-# rv32e-hitsz
+# rvemu-hitsz
