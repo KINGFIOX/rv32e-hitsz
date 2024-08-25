@@ -13,7 +13,7 @@ fn main() {
         .unwrap()
         .read_to_end(&mut kernel)
         .unwrap();
-    let mut cpu = CPU::new(&user, 0, &kernel, 0x1c09_0000, 0, 1 << 31);
+    let mut cpu = CPU::new(&user, 0, &kernel, 0x1c09_0000, 0x8000_0000, 0x8000_0000);
     loop {
         println!("==========  ==========");
         // 当前状态
