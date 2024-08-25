@@ -1,50 +1,43 @@
 {
-  description = "A flake to provide an environment for fpga";
+  description = "Rust development environment with Clang and LLVM support";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs";
     flake-utils.url = "github:numtide/flake-utils";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs, flake-utils, rust-overlay, ... }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = import nixpkgs { inherit system; };
-        verilatorIncludePath = "${pkgs.verilator}/share/verilator/include";
+        overlays = [ (import rust-overlay) ];
+        pkgs = import nixpkgs { inherit system overlays; };
+        lib = pkgs.lib;
+        toolchain = pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
       in
       {
         devShell = pkgs.mkShell {
-          buildInputs = with pkgs; [
+          # 本机环境 (不保证可移植)
+          nativeBuildInputs = (with pkgs; [
+            # pkg-config 用于管理: 编译、链接时所需库的路径
+            pkg-config
+            clang_16
+            llvm_16
+            libxml2
+          ]) ++ [
+            # Mold Linker for faster builds (only on Linux)
+            (lib.optionals pkgs.stdenv.isLinux pkgs.mold)
+          ] ++ [
             # rust
-            clippy
-            rustc
-            cargo
-            rustfmt
-            rust-analyzer
-            # c++
-            clang
-            llvm
-            clang-tools
-            verilator
-            cmake
-            ninja
-            # utils
-            qemu
-            (with pkgsCross.riscv64; [ buildPackages.gcc buildPackages.gdb ])
-            (with pkgsCross.riscv32; [ buildPackages.gcc buildPackages.gdb ])
-            yosys
-            verible
+            # pkgs.rust-analyzer-unwrapped
+            pkgs.cargo-insta
+            toolchain
           ];
-
-          RUST_BACKTRACE = 1;
-
-          shellHook = ''
-            export C_INCLUDE_PATH=${verilatorIncludePath}:$C_INCLUDE_PATH
-            export CPLUS_INCLUDE_PATH=${verilatorIncludePath}:$CPLUS_INCLUDE_PATH
-            export VERILATOR_HOME=${pkgs.verilator}
-            export MAKEFLAGS="-j$(nproc)"
-          '';
+          buildInputs = with pkgs; [ pkgsCross.riscv32.buildPackages.gcc qemu ];
+          RUST_SRC_PATH = "${toolchain}/lib/rustlib/src/rust/library";
         };
       });
 }
-
