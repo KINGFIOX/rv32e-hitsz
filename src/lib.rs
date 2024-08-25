@@ -51,3 +51,10 @@ pub unsafe extern "C" fn rvemu_pc_step(cpu: *mut CPU) {
     let cpu = &mut *cpu;
     cpu.pc_step();
 }
+
+/// # Safety
+#[no_mangle]
+pub unsafe extern "C" fn rvemu_dump(cpu: *mut CPU) {
+    let cpu = &*cpu;
+    cpu.dump();
+}
