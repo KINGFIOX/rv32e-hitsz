@@ -17,8 +17,7 @@
         pkgs = import nixpkgs { inherit system overlays; };
         lib = pkgs.lib;
         toolchain = pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
-      in
-      {
+      in {
         devShell = pkgs.mkShell {
           # 本机环境 (不保证可移植)
           nativeBuildInputs = (with pkgs; [
