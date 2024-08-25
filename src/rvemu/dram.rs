@@ -12,9 +12,9 @@ impl DRAM {
     }
 
     pub fn new(data: &[u8], base: u32, size: u32) -> Self {
-        let len = DRAM::align_up(size, 4) as usize;
+        let len = DRAM::align_up(size, 4);
         let mut dram = DRAM {
-            data: vec![0; len],
+            data: vec![0; len as usize],
             base,
         };
         dram.data[..data.len()].copy_from_slice(data);
@@ -48,7 +48,7 @@ impl DRAM {
     }
 
     pub fn store(&mut self, addr: u32, data: u32, size: u32) -> Result<()> {
-        if self.base <= addr && addr < self.base + self.data.len() as u32 {
+        if self.base <= addr && (addr as usize) < self.base as usize + self.data.len() {
             let offset = (addr - self.base) as usize;
             match size {
                 8 => {
@@ -70,7 +70,13 @@ impl DRAM {
                 _ => Err(anyhow!("Invalid data size: {}", size)).with_context(|| context!()),
             }
         } else {
-            Err(anyhow!("Invalid data address: 0x{:08x}", addr)).with_context(|| context!())
+            Err(anyhow!(
+                "Invalid data address: 0x{:08x} <= 0x{:08x} < 0x{:08x}",
+                self.base,
+                addr,
+                self.base + self.data.len() as u32
+            ))
+            .with_context(|| context!())
         }
     }
 }
