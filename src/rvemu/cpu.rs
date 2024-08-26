@@ -23,7 +23,8 @@ impl CPU {
         let mut regs: [u32; 32] = [0; 32]; // 默认寄存存放的是 无符号
         regs[2] = stack_base.wrapping_add(stack_size); // sp
         let pc = user_base;
-        let csrs = [0; 4096];
+        let mut csrs = [0; 4096];
+        csrs[MTVAL as usize] = kernel_base;
         let irom = IROM::new(user, user_base, kernel, kernel_base);
         let dram = DRAM::new(user, user_base, stack_base, stack_size);
         Self {
@@ -208,14 +209,51 @@ impl CPU {
             Instr::SLTU(rd, rs1, rs2) => {
                 self.regs[rd as usize] = (self.regs[rs1 as usize] < self.regs[rs2 as usize]) as u32;
             }
-            Instr::ECALL => todo!(),
-            Instr::ERET => todo!(),
-            Instr::CSRRW(_, _, _) => todo!(),
-            Instr::CSRRS(_, _, _) => todo!(),
-            Instr::CSRRC(_, _, _) => todo!(),
-            Instr::CSRRWI(_, _, _) => todo!(),
-            Instr::CSRRSI(_, _, _) => todo!(),
-            Instr::CSRRCI(_, _, _) => todo!(),
+            Instr::ECALL => {
+                self.store_csr(MEPC, self.pc).with_context(|| context!())?;
+                let mtval = self.load_csr(MTVAL).with_context(|| context!())?;
+                self.pc = mtval;
+                self.store_csr(MCAUSE, 0x0000_000b)
+                    .with_context(|| context!())?;
+            }
+            Instr::ERET => {
+                self.pc = self.load_csr(MEPC).with_context(|| context!())?;
+                return Err(anyhow!("eret happened")).with_context(|| context!());
+            }
+            Instr::CSRRW(rd, csr_addr, rs1) => {
+                let t = self.load_csr(csr_addr).with_context(|| context!())?;
+                self.store_csr(csr_addr, self.regs[rs1 as usize])
+                    .with_context(|| context!())?;
+                self.regs[rd as usize] = t;
+            }
+            Instr::CSRRS(rd, csr_addr, rs1) => {
+                let t = self.load_csr(csr_addr).with_context(|| context!())?;
+                self.store_csr(csr_addr, t | self.regs[rs1 as usize])
+                    .with_context(|| context!())?;
+                self.regs[rd as usize] = t;
+            }
+            Instr::CSRRC(rd, csr_addr, rs1) => {
+                let t = self.load_csr(csr_addr).with_context(|| context!())?;
+                self.store_csr(csr_addr, t & !self.regs[rs1 as usize])
+                    .with_context(|| context!())?;
+                self.regs[rd as usize] = t;
+            }
+            Instr::CSRRWI(rd, csr_addr, zimm) => {
+                self.regs[rd as usize] = self.load_csr(csr_addr).with_context(|| context!())?;
+                self.store_csr(csr_addr, zimm).with_context(|| context!())?;
+            }
+            Instr::CSRRSI(rd, csr_addr, zimm) => {
+                let t = self.load_csr(csr_addr).with_context(|| context!())?;
+                self.store_csr(csr_addr, t | zimm)
+                    .with_context(|| context!())?;
+                self.regs[rd as usize] = t;
+            }
+            Instr::CSRRCI(rd, csr_addr, zimm) => {
+                let t = self.load_csr(csr_addr).with_context(|| context!())?;
+                self.store_csr(csr_addr, t & !zimm)
+                    .with_context(|| context!())?;
+                self.regs[rd as usize] = t;
+            }
         }
 
         Ok(())
@@ -235,7 +273,7 @@ impl CPU {
     #[allow(dead_code)]
     fn store_csr(&mut self, addr: u32, value: u32) -> Result<()> {
         match addr {
-            MSTATUS | MEPC | MCAUSE => {
+            MSTATUS | MEPC | MCAUSE | MTVAL => {
                 let addr = addr as usize;
                 self.csrs[addr] = value;
             }
@@ -250,7 +288,7 @@ impl CPU {
     /// Load a value from a CSR.
     fn load_csr(&self, addr: u32) -> Result<u32> {
         match addr {
-            MSTATUS | MEPC | MCAUSE => {
+            MSTATUS | MEPC | MCAUSE | MTVAL => {
                 let addr = addr as usize;
                 Ok(self.csrs[addr])
             }

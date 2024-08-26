@@ -16,6 +16,7 @@ pub use instr::*;
 const MSTATUS: u32 = 0x0300;
 const MEPC: u32 = 0x0341;
 const MCAUSE: u32 = 0x0342;
+const MTVAL: u32 = 0x343;
 
 const ABI: [&str; 32] = [
     "zero", " ra ", " sp ", " gp ", " tp ", " t0 ", " t1 ", " t2 ", " s0 ", " s1 ", " a0 ", " a1 ",
