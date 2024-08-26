@@ -17,7 +17,8 @@
         pkgs = import nixpkgs { inherit system overlays; };
         lib = pkgs.lib;
         toolchain = pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
-      in {
+      in
+      {
         devShell = pkgs.mkShell {
           # 本机环境 (不保证可移植)
           nativeBuildInputs = (with pkgs; [
@@ -34,7 +35,14 @@
             # pkgs.rust-analyzer-unwrapped
             pkgs.cargo-insta
             toolchain
-          ];
+          ] ++ (with pkgs; [
+            # cxx
+            cmake
+            ninja
+          ]) ++ (with pkgs; [
+            # hardware
+            verilator
+          ]);
           buildInputs = with pkgs; [ pkgsCross.riscv32.buildPackages.gcc qemu ];
           RUST_SRC_PATH = "${toolchain}/lib/rustlib/src/rust/library";
         };

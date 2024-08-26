@@ -1,15 +1,17 @@
 [package]
-name = "rvemu-hitsz"
+name = "rvemu_hitsz"
 version = "0.1.0"
 edition = "2021"
+
 
 [lib]
 name = "rvemu_hitsz"
 path = "src/rust/lib.rs"
+crate-type = ["staticlib"]
 
-[[bin]]
-name = "emu-bin"
-path = "src/rust/main.rs"
+# [[bin]]
+# name = "rvemu_bin"
+# path = "src/rust/main.rs"
 
 [dependencies]
 anyhow = "1.0.86"
