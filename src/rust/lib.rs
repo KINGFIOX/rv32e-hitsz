@@ -54,7 +54,14 @@ pub unsafe extern "C" fn rvemu_pc_step(cpu: *mut CPU) {
 
 /// # Safety
 #[no_mangle]
-pub unsafe extern "C" fn rvemu_dump(cpu: *mut CPU) {
+pub unsafe extern "C" fn rvemu_dump(cpu: *const CPU) {
     let cpu = &*cpu;
     cpu.dump();
+}
+
+/// # Safety
+#[no_mangle]
+pub unsafe extern "C" fn rvemu_pc(cpu: *const CPU) -> u32 {
+    let cpu = &*cpu;
+    cpu.pc()
 }

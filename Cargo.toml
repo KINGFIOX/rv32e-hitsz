@@ -1,11 +1,15 @@
-[[bin]]
-name = "emu-bin"
-path = "src/main.rs"
-
 [package]
 name = "rvemu-hitsz"
 version = "0.1.0"
 edition = "2021"
+
+[lib]
+name = "rvemu_hitsz"
+path = "src/rust/lib.rs"
+
+[[bin]]
+name = "emu-bin"
+path = "src/rust/main.rs"
 
 [dependencies]
 anyhow = "1.0.86"

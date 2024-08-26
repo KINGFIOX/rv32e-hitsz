@@ -51,6 +51,10 @@ impl CPU {
         self.dump_registers();
     }
 
+    pub fn pc(&self) -> u32 {
+        self.pc
+    }
+
     /// Execute an instruction after decoding. Return true if an error happens, otherwise false.
     pub fn execute(&mut self, inst: u32) -> Result<()> {
         // Emulate that register x0 is hardwired with all bits equal to 0.
