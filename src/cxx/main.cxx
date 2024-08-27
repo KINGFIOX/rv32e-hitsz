@@ -16,7 +16,7 @@ int main(void)
     std::vector<uint8_t> kernel_code((std::istreambuf_iterator<char>(kernel_file)), std::istreambuf_iterator<char>());
     auto kernel_ptr = kernel_code.data();
     auto kernel_len = (uint32_t)kernel_code.size();
-    uint64_t cpu = rvemu_new(user_ptr, 0, user_len, kernel_ptr, 0x1c09'0000, kernel_len, 0x0000'0000, 0xffff'ff00);
+    uint64_t cpu = rvemu_new(user_ptr, 0, user_len, kernel_ptr, 0x1c09'0000, kernel_len, 0x0000'0000, 0xffff'f000);
 
     while (true)
     {

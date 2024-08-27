@@ -33,7 +33,8 @@
 
 # Added by cargo
 
-/target
+target
 .direnv
+build
 
 .vscode

@@ -41,7 +41,8 @@ impl DRAM {
                 _ => Err(anyhow!("Invalid data size: {}", size)).with_context(|| context!()),
             }
         } else {
-            Err(anyhow!("Invalid data address: 0x{:08x}", addr)).with_context(|| context!())
+            // Err(anyhow!("Invalid data address: 0x{:08x}", addr)).with_context(|| context!())
+            Ok(0)
         }
     }
 
@@ -68,13 +69,14 @@ impl DRAM {
                 _ => Err(anyhow!("Invalid data size: {}", size)).with_context(|| context!()),
             }
         } else {
-            Err(anyhow!(
-                "Invalid data address: 0x{:08x} <= 0x{:08x} < 0x{:08x}",
-                self.base,
-                addr,
-                self.base + self.data.len() as u32
-            ))
-            .with_context(|| context!())
+            // Err(anyhow!(
+            //     "Invalid data address: 0x{:08x} <= 0x{:08x} < 0x{:08x}",
+            //     self.base,
+            //     addr,
+            //     self.base + self.data.len() as u32
+            // ))
+            // .with_context(|| context!())
+            Ok(())
         }
     }
 }
