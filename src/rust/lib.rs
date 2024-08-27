@@ -12,12 +12,12 @@ pub unsafe extern "C" fn rvemu_new(
     kernel_ptr: *const u8,
     kernel_base: u32,
     kernel_len: u32,
-    stack_base: u32,
-    stack_size: u32,
+    dram_base: u32,
+    dram_size: u32,
 ) -> *mut CPU {
     let user = std::slice::from_raw_parts(user_ptr, user_len as usize);
     let kernel = std::slice::from_raw_parts(kernel_ptr, kernel_len as usize);
-    let cpu = CPU::new(user, user_base, kernel, kernel_base, stack_base, stack_size);
+    let cpu = CPU::new(user, user_base, kernel, kernel_base, dram_base, dram_size);
     Box::into_raw(Box::new(cpu))
 }
 

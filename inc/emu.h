@@ -22,8 +22,8 @@ extern "C"
         uint8_t kernel_ptr[],
         uint32_t kernel_base,
         uint32_t kernel_len,
-        uint32_t stack_base,
-        uint32_t stack_size);
+        uint32_t dram_base,
+        uint32_t dram_size);
 
     extern void rvemu_free(uint64_t emu);
     extern WBStatus rvemu_execute(uint64_t emu, uint32_t inst);

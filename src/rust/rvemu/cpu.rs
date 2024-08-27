@@ -42,16 +42,16 @@ impl CPU {
         user_base: u32,
         kernel: &[u8],
         kernel_base: u32,
-        stack_base: u32,
-        stack_size: u32,
+        dram_base: u32,
+        dram_size: u32,
     ) -> Self {
         let mut regs: [u32; 32] = [0; 32]; // 默认寄存存放的是 无符号
-        regs[2] = stack_base.wrapping_add(stack_size); // sp
+        regs[2] = dram_base.wrapping_add(dram_size); // sp
         let pc = user_base;
         let mut csrs = [0; 4096];
         csrs[MTVAL as usize] = kernel_base;
         let irom = IROM::new(user, user_base, kernel, kernel_base);
-        let dram = DRAM::new(user, user_base, stack_base, stack_size);
+        let dram = DRAM::new(user, dram_base, dram_size);
         Self {
             regs,
             pc,
