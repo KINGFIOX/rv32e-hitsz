@@ -13,7 +13,7 @@ pub struct CPU {
 #[allow(clippy::upper_case_acronyms)]
 #[repr(C)]
 /// 写回的信息
-pub struct WBStatus {
+pub struct WBInfo {
     wb_have_inst: u32,
     wb_pc: u32,
     wb_rd: u32,
@@ -22,7 +22,7 @@ pub struct WBStatus {
     inst_valid: u32,
 }
 
-impl Default for WBStatus {
+impl Default for WBInfo {
     fn default() -> Self {
         Self {
             wb_have_inst: Default::default(),
@@ -81,7 +81,7 @@ impl CPU {
     }
 
     /// Execute an instruction after decoding. Return true if an error happens, otherwise false.
-    pub fn execute(&mut self, inst: u32) -> Result<WBStatus> {
+    pub fn execute(&mut self, inst: u32) -> Result<WBInfo> {
         // Emulate that register x0 is hardwired with all bits equal to 0.
         self.regs[0] = 0;
         let cur_pc = self.pc;
@@ -349,7 +349,7 @@ impl CPU {
             }
         };
 
-        Ok(WBStatus {
+        Ok(WBInfo {
             wb_have_inst: 1,
             wb_pc: cur_pc,
             wb_rd,

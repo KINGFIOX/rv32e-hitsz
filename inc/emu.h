@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-typedef struct WBStatus
+typedef struct WBInfo
 {
     uint32_t wb_have_inst;
     uint32_t wb_pc;
@@ -11,7 +11,7 @@ typedef struct WBStatus
     uint32_t wb_val;
     uint32_t wb_ena;
     uint32_t inst_valid;
-} WBStatus;
+} WBInfo;
 
 extern "C"
 {
@@ -26,7 +26,7 @@ extern "C"
         uint32_t dram_size);
 
     extern void rvemu_free(uint64_t emu);
-    extern WBStatus rvemu_execute(uint64_t emu, uint32_t inst);
+    extern WBInfo rvemu_execute(uint64_t emu, uint32_t inst);
     extern uint32_t rvemu_fetch(uint64_t emu);
     extern void rvemu_pc_step(uint64_t emu);
     extern void rvemu_dump(uint64_t emu);

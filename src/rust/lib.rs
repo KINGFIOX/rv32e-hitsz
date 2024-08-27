@@ -32,11 +32,11 @@ pub unsafe extern "C" fn rvemu_free(cpu: *mut CPU) {
 
 /// # Safety
 #[no_mangle]
-pub unsafe extern "C" fn rvemu_execute(cpu: *mut CPU, inst: u32) -> WBStatus {
+pub unsafe extern "C" fn rvemu_execute(cpu: *mut CPU, inst: u32) -> WBInfo {
     let cpu = &mut *cpu;
     match cpu.execute(inst) {
         Ok(wb_status) => wb_status,
-        Err(_) => WBStatus::default(),
+        Err(_) => WBInfo::default(),
     }
 }
 
