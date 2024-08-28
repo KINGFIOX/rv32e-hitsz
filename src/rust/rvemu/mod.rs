@@ -24,6 +24,9 @@ const ABI: [&str; 32] = [
     " s8 ", " s9 ", " s10", " s11", " t3 ", " t4 ", " t5 ", " t6 ",
 ];
 
+const SWITCH_ADDR: u32 = 0xffff_f070;
+const DIG_ADDR: u32 = 0xffff_f000;
+
 fn csr_abi(csr: &CSR) -> String {
     match *csr {
         MCAUSE => "mcause".to_string(),

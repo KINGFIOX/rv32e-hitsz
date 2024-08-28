@@ -1,3 +1,7 @@
+use std::io::{self, Write};
+
+use colored::Colorize;
+
 use super::*;
 
 #[allow(clippy::upper_case_acronyms)]
@@ -40,9 +44,18 @@ impl DRAM {
                 }
                 _ => Err(anyhow!("Invalid data size: {}", size)).with_context(|| context!()),
             }
+        } else if addr == SWITCH_ADDR {
+            print!("btn: ");
+            io::stdout().flush().with_context(|| context!())?;
+            let mut buf = String::new();
+            io::stdin()
+                .read_line(&mut buf)
+                .with_context(|| context!())?;
+            let input = buf.trim();
+            input.parse::<u32>().with_context(|| context!())
         } else {
-            // Err(anyhow!("Invalid data address: 0x{:08x}", addr)).with_context(|| context!())
-            Ok(0)
+            Err(anyhow!("Invalid data address: 0x{:08x}", addr)).with_context(|| context!())
+            // Ok(0)
         }
     }
 
@@ -68,15 +81,19 @@ impl DRAM {
                 }
                 _ => Err(anyhow!("Invalid data size: {}", size)).with_context(|| context!()),
             }
-        } else {
-            // Err(anyhow!(
-            //     "Invalid data address: 0x{:08x} <= 0x{:08x} < 0x{:08x}",
-            //     self.base,
-            //     addr,
-            //     self.base + self.data.len() as u32
-            // ))
-            // .with_context(|| context!())
+        } else if addr == DIG_ADDR {
+            let buf = format!("LED: {:#x}", data).blue();
+            println!("{}", buf);
             Ok(())
+        } else {
+            Err(anyhow!(
+                "Invalid data address: 0x{:08x} <= 0x{:08x} < 0x{:08x}",
+                self.base,
+                addr,
+                self.base + self.data.len() as u32
+            ))
+            .with_context(|| context!())
+            // Ok(())
         }
     }
 }

@@ -7,11 +7,12 @@ edition = "2021"
 [lib]
 name = "rvemu_hitsz"
 path = "src/rust/lib.rs"
-crate-type = ["staticlib"]
+# crate-type = ["staticlib"]
 
-# [[bin]]
-# name = "rvemu_bin"
-# path = "src/rust/main.rs"
+[[bin]]
+name = "rvemu_bin"
+path = "src/rust/main.rs"
 
 [dependencies]
 anyhow = "1.0.86"
+colored = "2.1.0"

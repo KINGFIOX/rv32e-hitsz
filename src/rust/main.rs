@@ -4,7 +4,7 @@ use rvemu_hitsz::rvemu::*;
 
 fn main() {
     let mut user: Vec<u8> = Vec::new();
-    File::open("./start.bin")
+    File::open("./random.bin")
         .unwrap()
         .read_to_end(&mut user)
         .unwrap();
@@ -13,7 +13,7 @@ fn main() {
         .unwrap()
         .read_to_end(&mut kernel)
         .unwrap();
-    let mut cpu = CPU::new(&user, 0, &kernel, 0x1c09_0000, 0x8000_0000, 0x8000_0000);
+    let mut cpu = CPU::new(&user, 0, &kernel, 0x1c09_0000, 0, (1 << 14) << 2);
     loop {
         println!("==========  ==========");
         // 当前状态
