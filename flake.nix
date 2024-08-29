@@ -44,7 +44,7 @@
               # hardware
               verilator
             ]);
-            buildInputs = with pkgs; [ pkgsCross.riscv32.buildPackages.gcc qemu ];
+            buildInputs = with pkgs; [ pkgsCross.riscv32-embedded.buildPackages.gcc qemu ];
             RUST_SRC_PATH = "${toolchain}/lib/rustlib/src/rust/library";
             CMAKE_GENERATOR = "Ninja";
             C_INCLUDE_PATH = "${pkgs.verilator}/share/verilator/include";

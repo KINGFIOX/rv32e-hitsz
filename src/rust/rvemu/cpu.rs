@@ -14,12 +14,12 @@ pub struct CPU {
 #[repr(C)]
 /// 写回的信息
 pub struct WBInfo {
-    wb_have_inst: u32,
-    wb_pc: u32,
-    wb_rd: u32,
-    wb_val: u32,
-    wb_ena: u32,
-    inst_valid: u32,
+    pub wb_have_inst: u32,
+    pub wb_pc: u32,
+    pub wb_rd: u32,
+    pub wb_val: u32,
+    pub wb_ena: u32,
+    pub inst_valid: u32,
 }
 
 impl Default for WBInfo {
@@ -46,7 +46,8 @@ impl CPU {
         dram_size: u32,
     ) -> Self {
         let mut regs: [u32; 32] = [0; 32]; // 默认寄存存放的是 无符号
-        regs[2] = dram_base.wrapping_add(dram_size); // sp
+                                           // regs[2] = dram_base.wrapping_add(dram_size); // sp
+        regs[2] = 0; // sp
         let pc = user_base;
         let mut csrs = [0; 4096];
         csrs[MTVAL as usize] = kernel_base;
@@ -405,10 +406,7 @@ impl CPU {
                 "{}\n{}",
                 output,
                 format!(
-                    " x{:02}({})={:#x}
-                    x{:02}({})={:#x}
-                    x{:02}({})={:#x}
-                    x{:02}({})={:#x} ",
+                    " x{:02}({})={:#x} x{:02}({})={:#x} x{:02}({})={:#x} x{:02}({})={:#x} ",
                     i,
                     ABI[i],
                     self.regs[i],

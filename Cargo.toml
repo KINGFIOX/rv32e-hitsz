@@ -10,9 +10,14 @@ path = "src/rust/lib.rs"
 # crate-type = ["staticlib"]
 
 [[bin]]
-name = "rvemu_bin"
-path = "src/rust/main.rs"
+name = "emu"
+path = "src/rust/emu.rs"
+
+[[bin]]
+name = "coe"
+path = "src/rust/coe.rs"
 
 [dependencies]
 anyhow = "1.0.86"
 colored = "2.1.0"
+rand = "0.8.5"

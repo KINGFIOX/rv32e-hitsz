@@ -1,6 +1,10 @@
-use std::io::{self, Write};
-
 use colored::Colorize;
+
+#[allow(unused)]
+use rand::Rng;
+
+#[allow(unused)]
+use std::io::{self, Write};
 
 use super::*;
 
@@ -45,14 +49,19 @@ impl DRAM {
                 _ => Err(anyhow!("Invalid data size: {}", size)).with_context(|| context!()),
             }
         } else if addr == SWITCH_ADDR {
-            print!("btn: ");
-            io::stdout().flush().with_context(|| context!())?;
-            let mut buf = String::new();
-            io::stdin()
-                .read_line(&mut buf)
-                .with_context(|| context!())?;
-            let input = buf.trim();
-            input.parse::<u32>().with_context(|| context!())
+            // print!("btn: ");
+            // io::stdout().flush().with_context(|| context!())?;
+            // let mut buf = String::new();
+            // io::stdin()
+            //     .read_line(&mut buf)
+            //     .with_context(|| context!())?;
+            // let input = buf.trim();
+            // input.parse::<u32>().with_context(|| context!())
+            Ok(0xA00000)
+            // let mut rng = rand::thread_rng();
+            // let random_number: u32 = rng.gen();
+            // println!("switch: {:#x}", random_number);
+            // Ok(random_number)
         } else {
             Err(anyhow!("Invalid data address: 0x{:08x}", addr)).with_context(|| context!())
             // Ok(0)
